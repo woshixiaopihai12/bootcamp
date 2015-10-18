@@ -21,6 +21,8 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
+
 
 /// Project headers
 #include <core/types.hh>
@@ -51,6 +53,42 @@ public:
     void test_hello_world(){
         TS_ASSERT("true");
     }
+    
+    utility::vector1< std::pair< core::Size, core::Size > >
+    identify_secondary_structure_spans( std::string const & secstruct_codes ){
+        utility::vector1< std::pair< core::Size, core::Size > > secondary_structure;
+        core::Size start;
+        for( core::Size iter = 0; iter < secstruct_codes.size()-1; ++iter){
+            if (secstruct_codes[iter] =='H' || secstruct_codes[iter] == 'E'){
+                start = iter;
+                while (secstruct_codes[iter] == secstruct_codes[start]) {
+                ++iter;
+                }
+        
+            std::pair< core::Size, core::Size > newpair(start+1, iter);
+            secondary_structure.push_back(newpair);
+            --iter;
+            }
+        }//for
+        return secondary_structure;
+    }//end function
 
+    void test_identify_secondary_structure_spans(){
+        std::string str = "   EEEEE   HHHHHHHH  EEEEE   IGNOR EEEEEE   HHHHHHHHHHH  EEEEE  HHHH   ";
+        utility::vector1< std::pair< core::Size, core::Size > > test_result = identify_secondary_structure_spans(str);
+        std::cout<<test_result<<std::endl;
+        str = "EEEEEEEEE EEEEEEEE EEEEEEEEE H EEEEE H H H EEEEEEEE";
+        test_result = identify_secondary_structure_spans(str);
+        std::cout<<test_result<<std::endl;
+        str="HHHHHHH   HHHHHHHHHHHH      HHHHHHHHHHHHEEEEEEEEEEHHHHHHH EEEEHHH ";
+        test_result = identify_secondary_structure_spans(str);
+        std::cout<<test_result;
+        TS_ASSERT(true);
+    }
 	
 };
+
+
+
+
+
