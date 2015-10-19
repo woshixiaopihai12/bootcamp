@@ -22,10 +22,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <string>
 #include <iostream>
+#include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.hh>
-#include <test/util/pose_funcs.hh>
-#include <core/scoring/dssp/Dssp.hh>
 
 class FoldTreeFromSSTests : public CxxTest::TestSuite {
 
@@ -73,11 +71,7 @@ public:
     }
     
     core::kinematics::FoldTree
-    fold_tree_from_ss(core::pose::Pose & pose ){
-        //tranfer the pose into sec_codes
-        core::scoring::dssp::Dssp dssp_val (pose);
-        std::string secstruct_codes= dssp_val.get_dssp_secstruct();
-        
+    fold_tree_from_ss(std::string secstruct_codes){
         //Initialize our foldtree
         core::kinematics::FoldTree foldtree;
         utility::vector1< std::pair< core::Size, core::Size > > test_result = identify_secondary_structure_spans(secstruct_codes);
@@ -154,13 +148,14 @@ public:
     }
     
     void test_fold_tree_from_ss(){
-        core::pose::Pose test_pose = create_test_in_pdb_pose();
-                core::kinematics::FoldTree foldtree = fold_tree_from_ss(test_pose);
+        std::string str = "   EEEEEEE    EEEEEEE         EEEEEEEEE    EEEEEEEEEE   HHHHHH         EEEEEEEEE         EEEEE     ";
+        core::kinematics::FoldTree foldtree = fold_tree_from_ss(str);
         foldtree.show( std::cout );
         TS_ASSERT(true);
     }
 	
 };
+
 
 
 
